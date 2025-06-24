@@ -1,25 +1,4 @@
 {
-  "submissions": [
-    {
-      "id": "X9ujeCD1",
-      "type": "Giriş Cəhdi",
-      "phoneNumber": "+994324234324",
-      "password": "3434343",
-      "createdAt": "2025-06-24T13:03:40.827Z"
-    },
-    {
-      "id": "aVOoJGvF",
-      "phoneNumber": "+994232424242",
-      "status": "pending_otp",
-      "createdAt": "2025-06-24T12:29:02.073Z"
-    },
-    {
-      "id": "VUbTuUkv",
-      "type": "Giriş Cəhdi",
-      "phoneNumber": "+994343242234",
-      "password": "34324523423",
-      "createdAt": "2025-06-24T12:19:10.507Z"
-    }
-  ],
+  "submissions": [],
   "visits": 1
 }

