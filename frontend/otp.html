@@ -803,33 +803,58 @@
       caret-color: #06bde9 !important;
     }
     
-    /* ... (Diğer mevcut stilleriniz) ... */
-
-    /* ----- YENİ EKLENEN STİLLER ----- */
     .otp-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+  /* YENİ: PC gibi geniş ekranlarda kutuların çok yayılmasını engeller */
+  max-width: 400px;
+  
+  /* YENİ: Konteyneri yatayda ortalamak için */
+  margin-left: auto;
+  margin-right: auto;
+  
+  /* YENİ: Buton ile arasına net bir boşluk eklemek için */
+  margin-bottom: 24px; 
+}
 
-    .otp-input {
-      width: 45px;
-      height: 55px;
-      text-align: center;
-      font-size: 1.5rem;
-      border: 1px solid #b0bec5; /* secondary color */
-      border-radius: 8px;
-      outline: none;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      color: #00557c; /* primary darken-4 */
-    }
+.otp-input {
+  /* Genişlik formülü aynı kalıyor, bu taşmayı engellemek için en iyisi */
+  width: calc((100% - 40px) / 6); /* Aradaki boşlukları toplam 40px olarak ayarladık */
 
-    .otp-input:focus {
-      border-color: #06bde9; /* primary color */
-      box-shadow: 0 0 0 3px rgba(6, 189, 233, 0.3);
-    }
-    
+  /* YENİ: Kutuların şeklini korumak için yükseklik yerine bunu kullanıyoruz */
+  /* Bu kural, kutunun yüksekliğinin, genişliğinin 1.2 katı olmasını sağlar */
+  aspect-ratio: 1 / 1.2;
+  
+  /* Artık sabit yüksekliğe ihtiyacımız yok, orantılı olacak */
+  height: auto; 
+  
+  /* --- GÖRSEL İYİLEŞTİRMELER --- */
+  font-size: 1.8rem; /* Rakamların daha büyük ve okunaklı olması için */
+  font-weight: 500;  /* Rakamları biraz daha dolgun yapar */
+  color: #333;      /* Rakam rengi */
+  
+  border: 1px solid #DDD; /* Kenarlık rengini daha yumuşak bir gri yapalım */
+  border-radius: 10px;    /* Kenarları biraz daha yuvarlak yapalım */
+  background-color: #FAFAFA; /* Hafif bir arka plan rengi */
+  
+  /* YENİ: Seçili kutunun daha belirgin olması için yumuşak bir geçiş efekti */
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  /* Temel Stiller */
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0;
+  outline: none;
+}
+
+/* YENİ: Kullanıcı bir kutucuğa tıkladığında (focus) stilini değiştir */
+.otp-input:focus {
+  border-color: #06bde9; /* Temanızın ana rengi */
+  background-color: #FFF;
+  box-shadow: 0 0 0 3px rgba(6, 189, 233, 0.3); /* Dışına hafif bir parlama ekle */
+}
     .timer-container {
         text-align: right;
         margin-bottom: 20px;

