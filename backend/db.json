@@ -1,19 +1,4 @@
 {
-  "submissions": [
-    {
-      "id": "b7uwYcgK",
-      "type": "Giriş Cəhdi",
-      "phoneNumber": "+994354311111",
-      "password": "23123123111",
-      "createdAt": "2025-06-24T13:59:25.617Z"
-    },
-    {
-      "id": "FmvF0lps",
-      "type": "Giriş Cəhdi",
-      "phoneNumber": "+994354353222",
-      "password": "3424232",
-      "createdAt": "2025-06-24T13:58:44.818Z"
-    }
-  ],
+  "submissions": [],
   "visits": 1
 }
