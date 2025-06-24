@@ -1203,13 +1203,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 showOnPageError("Telefon nömrəsi və ya şifrə yanlışdır.");
             } else {
                 // YENİ: alert yerine, server'dan gelen hata mesajı gösterilir.
-                showOnPageError('Server xətası: ' + (data.message || 'Bilinməyən xəta'));
+                showOnPageError('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
             }
         })
         .catch(error => {
             // YENİ: alert yerine, genel bağlantı hatası mesajı gösterilir.
-            showOnPageError('Serverə qoşulmada xəta baş verdi.');
-            console.error('Serverə qoşulmada xəta:', error);
+            showOnPageError('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
+            console.error('Daxil etdiyiniz şifrə və ya nömrə yanlışdır');
         })
         .finally(() => {
             buttonContent.textContent = 'Daxil ol';
